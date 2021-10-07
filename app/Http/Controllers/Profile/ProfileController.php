@@ -46,9 +46,13 @@ class ProfileController extends ApiController
      * @param  \App\Models\Profiles  $profiles
      * @return \Illuminate\Http\Response
      */
-    public function show(Profiles $profiles)
+    public function show()
     {
-        //
+        // return auth()->user()->id;
+        $profile = Profiles::Where([
+            'user_id' => auth()->user()->id,
+        ])->first();
+        return $profile;
     }
 
     /**
@@ -92,8 +96,8 @@ class ProfileController extends ApiController
             $profile->date_of_birth = $request->date_of_birth;
         }
 
-        if($request -> has('alcholic')){
-            $profile->alcholic = $request->alcholic;
+        if($request -> has('alcoholic')){
+            $profile->alcoholic = $request->alcoholic;
         }
 
         if($request->has('weight')){

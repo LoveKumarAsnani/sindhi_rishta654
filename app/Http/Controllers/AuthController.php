@@ -38,29 +38,28 @@ class AuthController extends Controller
     //     'password' => 'required|min:6|confirmed',
     //     'phone_number' => 'required|min:11',
     // ]);
+    
         
      $request->validate([
         'first_name' => 'required|string',
         'last_name' => 'required|string',
-        'nick_name' => 'required|string',
+        // 'nick_name' => 'required|string',
         'user_name' => 'required|string',
         'email' => 'required|email|unique:users',
         'user_name' => 'required|unique:users',
         'password' => 'required|min:6|confirmed',
-        'phone_number' => 'required|min:11',
-    ]);
+        'phone_number' => 'required|min:11|unique:users',
+    ],['status'=>false]);
     
-
      $data=$request->all();
-     $data['password'] =bcrypt($request->password);
-     $data['status'] =User::USER_UN_VERFIED;
+     $data['password'] = bcrypt($request->password);
+     $data['status'] = User::USER_UN_VERFIED;
      $data['verification_token'] = User::generateVerificationCode();
-     $data['device_notify_token'] =User::deviceNotificationToken();
-     $data['phone_number_verified'] =User::PHONE_NUMBER_NOT_VERIFIED;
-     $data['email_verified'] =User::EMAIL_NOT_VERIFIED;
+     $data['device_notify_token'] = User::deviceNotificationToken();
+     $data['phone_number_verified'] = User::PHONE_NUMBER_NOT_VERIFIED;
+     $data['email_verified'] = User::EMAIL_NOT_VERIFIED;
 
      $user= User::create($data);
-
     
     Profiles::create([
         'user_id' =>  $user->id
@@ -81,8 +80,9 @@ class AuthController extends Controller
 
 
     $response =[
-        'user' => $user,
-        'token'=> $token
+        'data' => $user,
+        'token'=> $token,
+        'status'=> true,
     ];
 
     return response($response, 201);
@@ -103,22 +103,29 @@ class AuthController extends Controller
 
 
     public function login(Request $request){
+        
         $fields =$request->validate([
             'email' => 'required|string',
-            'password'=> 'required|string'
+            'password'=> 'required|string',
         ]);
     
         $user = User::where('email',$fields['email'])->first();
-
-        if(!$user  || !Hash::check($fields['password'], $user->password)) {
-            return response([
-                'message' => ' Bad Creds'
+        if(!$user) {
+            return response()->json(['error'=>
+               [ 'email' => ['email does not match',]]
             ],401);
         }
+
+        if(!Hash::check($fields['password'], $user->password)) {
+            return response()->json(['error'=>
+               [ 'password' => ['Password does not match',]]
+            ],401);
+        }
+        
     
         $token = $user->createToken('myapptoken')->plainTextToken;
     
-        $response =[
+        $response = [
             'data' => $user,
             'token'=> $token,
             'status' => true,

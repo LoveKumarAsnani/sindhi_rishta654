@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Friend\FriendController;
 use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\User\UserController;
 use App\Models\Profiles;
 
 /*
@@ -32,7 +33,7 @@ Route::post('/login', [AuthController::class,'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post('/logout', [AuthController::class,'logout']);
-    Route::get('/users',[User::class],'index');
+    Route::get('/users',[UserController::class,'index']);
 
 
     Route::post('/send-friend-request',[FriendController::class,'store']);
@@ -47,6 +48,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
 
     
     Route::post('/edit-profile',[ProfileController::class,'update']);
+    Route::get('/profile',[ProfileController::class,'show']);
 
 
 });

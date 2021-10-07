@@ -92,14 +92,14 @@ class Handler extends ExceptionHandler
 
         return parent::render($request,$exception);
     }
-    // protected function convertValidationExceptionToResponse(ValidationException $e, $request)
-    // {
-    //     $errors= $e->validator->errors()->getMessages();
-    //     return $this->errorResponse($errors,422);
-    // }
-    // protected function unauthenticated($request, AuthenticationException $exception)
-    // {
-    //     return $this->errorResponse('Unauthenticated.',401);
+    protected function convertValidationExceptionToResponse(ValidationException $e, $request)
+    {
+        $errors= $e->validator->errors()->getMessages();
+        return $this->errorResponse($errors,422);
+    }
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        return $this->errorResponse('Unauthenticated.',401);
 
-    // }
+    }
 }

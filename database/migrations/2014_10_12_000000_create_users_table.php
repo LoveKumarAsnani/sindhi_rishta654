@@ -25,7 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('phone_number')->unique();
             $table->boolean('is_email_verified')->default(User::EMAIL_NOT_VERIFIED);
             $table->boolean('is_phone_number_verified')->default(User::PHONE_NUMBER_NOT_VERIFIED);
-            $table->string('verification_token');
+            $table->string('verification_token')->default(User::generateVerificationCode());
             $table->string('device_notify_token');
             $table->string('status')->default(User::USER_UN_VERFIED);
             $table->rememberToken();

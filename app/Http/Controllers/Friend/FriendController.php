@@ -20,7 +20,13 @@ class FriendController extends ApiController
     {
         $friends = Friends::where('user_id', auth()->user()->id)->get();
         //print(auth()->user()->id);
-        return $this->showAll($friends);
+        foreach ($friends as $key => $friend) {
+            $friend->user->profile->pictures = $friend->user->pictures;
+            
+            echo json_encode($friend->user->profile);
+            # code...
+        }
+        // return $this->showAll($friends);
     }
 
     /**
