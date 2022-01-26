@@ -12,5 +12,14 @@ class Profiles extends Model
     protected $fillable = [
         'user_id',
     ];
+
+    public function getDateOfBirthAttribute($date_of_birth){
+        if($date_of_birth != null){
+            return date("d-m-Y", strtotime($date_of_birth));
+        }else{
+            return null;
+        }
+    }
+   
     
 }

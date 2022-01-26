@@ -13,32 +13,46 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    const EMAIL_VERIFIED = true;
-    const EMAIL_NOT_VERIFIED = false;
+    const EMAIL_VERIFIED = '1';
+    const EMAIL_NOT_VERIFIED = '0';
 
-    const PHONE_NUMBER_VERFIED = true;
-    const PHONE_NUMBER_NOT_VERIFIED = false;
+    const PHONE_NUMBER_VERFIED = '1';
+    const PHONE_NUMBER_NOT_VERIFIED = '0';
 
-    const USER_VERFIED = 'Verified';
-    const USER_UN_VERFIED = 'Unverfied';
-    const USER_BLOCK = 'Block';
+    const USER_VERFIED = '1';
+    const USER_UN_VERFIED = '0';
+    const USER_BLOCK = '2';
+
+    const MALE_PROFILE_PICTURE = 'dummy_picture.png';
+    const FEMALE_PROFILE_PICTURE = 'dummy_picture.png';
+
+    const MALE = '1';
+    const FEMALE = '2';
+    const OTHER = '3';
+
+    const SELFF = '1';
+    const PARENTT = '2';
 
 
 
-    public function friends(){
+    public function friends()
+    {
         return $this->hasMany(Friends::class);
     }
-    
-    public function profile(){
+
+    public function profile()
+    {
         return $this->hasOne(Profiles::class);
     }
-    
 
-    public function pictures(){
+
+    public function pictures()
+    {
         return $this->hasMany(Pictures::class);
     }
 
-    public function favorites(){
+    public function favorites()
+    {
         return $this->hasMany(UserFavorites::class);
     }
 
@@ -59,19 +73,24 @@ class User extends Authenticatable
         'is_phone_number_verified',
         'verification_token',
         'device_notify_token',
-        'status'
+        'status',
+        'profile_picture',
+        'gender',
+        'profile_fill_by'
     ];
-    
 
-    public static function generateVerificationCode(){
+
+    public static function generateVerificationCode()
+    {
         return Str::random(40);
     }
 
-    public static function deviceNotificationToken(){
-        return Str::random(10);
+    public static function uniqueId()
+    {
+        return Str::random(4);
     }
-	
-        
+
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -81,8 +100,29 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'verification_token'
+        'verification_token',
+
     ];
+
+    public function getGender($gender)
+    {
+        if ($gender == 1) {
+            return User::MALE;
+        } else if ($gender == 2) {
+            return User::FEMALE;
+        } else {
+            return User::OTHER;
+        }
+    }
+
+    public function getProfileFillBy($profile_fill_by)
+    {
+        if ($profile_fill_by == 1) {
+            return User::SELFF;
+        } else if ($profile_fill_by == 2) {
+            return User::PARENTT;
+        }
+    }
 
     /**
      * The attributes that should be cast.

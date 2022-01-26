@@ -9,6 +9,12 @@ class Friends extends Model
 {
     use HasFactory;
 
+    const NEWW = 1;
+    const ACCEPTED = 2;
+    const DENIED = 3;
+
+   
+
     protected $fillable = [
         'user_id',
         'friend_user_id',
@@ -18,6 +24,5 @@ class Friends extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
-
 
 }

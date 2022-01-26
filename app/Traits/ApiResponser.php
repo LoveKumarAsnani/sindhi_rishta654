@@ -33,9 +33,14 @@ trait ApiResponser{
     protected function successResponse($message ,$code)
     {
         return response()->json([
-            'error' => $message,
+            'message' => $message,
             'status' => true,
         ],$code);
+    }
+
+    protected function showMessage($message ,$code =200)
+    {
+        return response()->json(['data'=>$message],$code);
     }
 
 

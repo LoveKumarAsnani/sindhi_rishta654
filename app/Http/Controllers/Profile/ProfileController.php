@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
+use App\Models\Pictures;
 use App\Models\Profiles;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProfileController extends ApiController
@@ -49,10 +51,22 @@ class ProfileController extends ApiController
     public function show()
     {
         // return auth()->user()->id;
-        $profile = Profiles::Where([
-            'user_id' => auth()->user()->id,
-        ])->first();
-        return $profile;
+       $user = User::findOrFail(auth()->user()->id);
+        $profile = $user->profile;
+
+        $pictures = $user->pictures;
+
+        
+
+        return response()->json([
+            'data' => $user,
+            'profile' => $profile,
+            'pictures' => $pictures,
+            'status' => true,
+            'statusCode' => 200,
+            'message' => 'Succcess'
+        ]);
+
     }
 
     /**
@@ -93,7 +107,10 @@ class ProfileController extends ApiController
         }
 
         if($request -> has('date_of_birth')){
-            $profile->date_of_birth = $request->date_of_birth;
+          
+            $newDate = date("Y-m-d H:i:s", strtotime($request->date_of_birth));
+            // echo $request->$newDate; 
+            $profile->date_of_birth = $newDate;
         }
 
         if($request -> has('alcoholic')){
@@ -110,6 +127,10 @@ class ProfileController extends ApiController
 
         if($request->has('vegetarian')){
             $profile->vegetarian =$request->vegetarian;
+        }
+
+        if($request->has('country')){
+            $profile->country =$request->country;
         }
 
         if($request->has('state')){
@@ -172,18 +193,13 @@ class ProfileController extends ApiController
             $profile->occupation =$request->occupation;
         }
 
-        if($request->has('highest_education')){
-            $profile->highest_education =$request->highest_education;
+        if($request->has('job_type')){
+            $profile->job_type =$request->job_type;
         }
 
         if($request->has('salary')){
             $profile->salary =$request->salary;
         }
-
-        if($request->has('highest_education')){
-            $profile->highest_education =$request->highest_education;
-        }
-
 
         if(!$profile->isDirty()){
             return $this->errorResponse('You Need to Specify Different Value to Update',422);

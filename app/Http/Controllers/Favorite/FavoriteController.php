@@ -5,8 +5,13 @@ namespace App\Http\Controllers\Favorite;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 use App\Models\Friends;
+use App\Models\Pictures;
+use App\Models\Profiles;
+use App\Models\User;
 use App\Models\UserFavorites;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class FavoriteController extends ApiController
 {
@@ -17,9 +22,30 @@ class FavoriteController extends ApiController
      */
     public function index()
     {
-        $friends = Friends::where('user_id', auth()->user()->id)->get();
-        //print(auth()->user()->id);
-        return $this->showAll($friends);
+        $users = DB::select(DB::raw('select u.id, u.first_name,u.last_name,u.nick_name,u.user_name,u.email,u.phone_number,u.gender,u.profile_fill_by,u.profile_picture,u.is_email_verified,u.is_phone_number_verified,u.device_notify_token,u.status, f.user_id friend_user_id, f.status as friend_status, fv.user_id fav_user_id from users
+    u left join friends f on u.id = f.friend_user_id left join
+    user_favorites fv on u.id = fv.fav_user_id where (fv.user_id = '.auth()->user()->id.') AND (f.user_id = '.auth()->user()->id.' or f.user_id is null) AND u.id !='.auth()->user()->id.''));
+    
+        foreach ($users as $key => $user) {
+            $userProfile = Profiles::Where([
+                'user_id' => $user->id,
+            ])->first();
+            $user->profile = $userProfile;
+            
+            $userPictures = Pictures::Where([
+                'user_id' => $user->id,
+            ])->get();
+            $user->pictures = $userPictures;
+
+        }
+        return response()->json([
+            'data'=> $users,
+            'status' => true,
+            'statusCode' => 200,
+            'message' => 'successfully Listed'
+        ]);
+    
+        
     }
 
     /**
@@ -43,14 +69,25 @@ class FavoriteController extends ApiController
         $request->validate([
             'fav_user_id' => 'required|integer',
         ]); 
+
+        $request->validate([
+            'fav_user_id' => [
+                Rule::unique('user_favorites')
+                  ->where('fav_user_id', $request->input('fav_user_id'))
+                  ->where('user_id', auth()->user()->id) 
+            ],
+        ]); 
        
         
-        $friend = Friends::create([
+        $friend = UserFavorites::create([
             'user_id' => auth()->user()->id,
-            'fav_user_id' => $request->friend_user_id,
+            'fav_user_id' => $request->fav_user_id,
         ]);
-
-        return $this->showOne($friend,200,'Favorite Succeed');
+        if($friend){
+            return $this->showOne($friend,200,'Favorite Succeed');
+        }else{
+            return $this->errorResponse("Favorite Not Succeed",404);
+        }
     }
 
     /**
@@ -100,11 +137,14 @@ class FavoriteController extends ApiController
         ]); 
         
 
-        $friend = Friends::firstWhere([
+        $friend = UserFavorites::firstWhere([
             'user_id' => auth()->user()->id,
-            'fav_user_id' => $request->friend_user_id,
+            'fav_user_id' => $request->fav_user_id,
         ])->delete();
-
-        return $this->successResponse('Un Favorite',200);
+        if($friend){
+            return $this->successResponse('Un Favorite Succeed',200);
+        }else{
+            return $this->errorResponse('Un Favorite not Succeed',404);
+        }
     }
 }

@@ -9,8 +9,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Friend\FriendController;
+use App\Http\Controllers\Picture\PictureController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\User\UserController;
+use App\Models\Pictures;
 use App\Models\Profiles;
 
 /*
@@ -28,29 +30,44 @@ use App\Models\Profiles;
 //     return $request->user();
 // });
 
-Route::post('/register', [AuthController::class,'register']);
-Route::post('/login', [AuthController::class,'login']);
-
-Route::group(['middleware' => ['auth:sanctum']], function(){
-    Route::post('/logout', [AuthController::class,'logout']);
-    Route::get('/users',[UserController::class,'index']);
-
-
-    Route::post('/send-friend-request',[FriendController::class,'store']);
-    Route::delete('/unsend-friend-request',[FriendController::class,'destroy']);
-    Route::get('/friends', [FriendController::class,'index']);
-    Route::get('/friend/{user_id}', [FriendController::class,'show']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::name('verify')->get('users/verify/{token}', [AuthController::class, 'verify']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 
-    Route::post('/send-favorite-request',[FavoriteController::class,'store']);
-    Route::delete('/unsend-favorite-request',[FavoriteController::class,'destroy']);
-    Route::get('/favorites', [FavoriteController::class,'index']);
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
 
-    
-    Route::post('/edit-profile',[ProfileController::class,'update']);
-    Route::get('/profile',[ProfileController::class,'show']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/upload-profile-picture', [PictureController::class, 'uploadProfilePicture']);
+    Route::post('/edit-user', [UserController::class, 'edit']);
+    Route::get('/user-info', [UserController::class, 'show']);
 
 
+    Route::post('/send-friend-request', [FriendController::class, 'store']);
+    Route::post('/unsend-friend-request', [FriendController::class, 'destroy']);
+    Route::get('/friend-requests', [FriendController::class, 'index']);
+    Route::get('/my-requests', [FriendController::class, 'myRequests']);
+    Route::get('/friends', [FriendController::class, 'friends']);
+    // Route::get('/friend/{user_id}', [FriendController::class, 'show']);
+    Route::post('/accept-friend-request', [FriendController::class, 'acceptFriendRequest']);
+    Route::post('/denied-friend-request', [FriendController::class, 'deniedFriendRequest']);
+    Route::post('/remove-friend', [FriendController::class, 'removeFriend']);
+
+
+    Route::post('/send-favorite-request', [FavoriteController::class, 'store']);
+    Route::post('/unsend-favorite-request', [FavoriteController::class, 'destroy']);
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+
+
+    Route::post('/edit-profile', [ProfileController::class, 'update']);
+    Route::get('/profile', [ProfileController::class, 'show']);
+
+    Route::post('add-pictures', [PictureController::class, 'store']);
+    Route::post('delete-picture', [PictureController::class, 'destroy']);
 });
 
 // Route::post('/login', function(Request $request){

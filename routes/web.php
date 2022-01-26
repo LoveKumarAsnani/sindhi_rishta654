@@ -1,9 +1,14 @@
 <?php
 
+use App\Mail\UserCreated;
 use App\Models\Friends;
+use App\Models\Profiles;
 use App\Models\User;
+use Facade\FlareClient\View;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use Nette\Utils\Html;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,11 +21,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/users', function () {
-   $request = Friends::find(5);
-
+Route::get('/testing', function () {
    
-   echo json_encode($request->users);
+   Mail::to('sagheerhzardari@gmail.com')->send(new UserCreated(new User));
 });
+
 
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Friends;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,7 +21,7 @@ class CreateFriendsTable extends Migration
             $table->unique(['user_id', 'friend_user_id']);
             $table->foreign('friend_user_id')->references('id')->on('users');
             $table->foreign('user_id')->references('id')->on('users');
-
+            $table->unsignedInteger('status')->default(Friends::NEWW);
             $table->dateTime('request_date');
             $table->timestamps();
         });
