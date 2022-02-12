@@ -39,15 +39,20 @@ class ContactUsController extends ApiController
     public function store(Request $request)
     {
         $request->validate([
-            'query' => 'required',
+            'description' => 'required',
+            'name' => 'required',
+            'email' => 'required|email',
+            'contact_number' => 'required',
         ]);
 
-        $query = ContactUs::create([
-            'user_id' => auth()->user()->id,
-            'query' => $request->query,
+        $contactUs = ContactUs::create([
+            'description' => $request->description,
+            'name' => $request->name,
+            'email' => $request->email,
+            'contact_number' => $request->contact_number,
         ]);
-        if ($query) {
-            return $this->showOne($query, 200, 'Query Submitted');
+        if ($contactUs) {
+            return $this->showOne($contactUs, 200, 'Query Submitted');
         } else {
             return $this->errorResponse("Query Submmission Failed", 404);
         }

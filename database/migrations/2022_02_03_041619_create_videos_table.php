@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateContactUsTable extends Migration
+class CreateVideosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateContactUsTable extends Migration
      */
     public function up()
     {
-        Schema::create('contact_us', function (Blueprint $table) {
+        Schema::create('videos', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email');
-            $table->string('contact_number');
             $table->longText('description');
-            // $table->foreignid('user_id')->references('id')->on('users');
+            $table->string('thumbnail');
+            $table->string('video_url');
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreateContactUsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contact_us');
+        Schema::dropIfExists('videos');
     }
 }

@@ -18,10 +18,14 @@ class CreateProfilesTable extends Migration
             $table->string('surname')->nullable();
             $table->string('caste')->nullable();
             $table->dateTime('date_of_birth')->nullable();
-            $table->boolean('alcoholic')->nullable();
+            $table->string('marital_status')->nullable();
+            $table->string('mother_tongue')->nullable();
+            $table->string('physical_status')->nullable();
+            $table->boolean('alcoholic')->nullable()->comment('1 = yes, 0 = no');
             $table->string('weight')->nullable();
             $table->string('height')->nullable();
-            $table->boolean('vegetarian')->nullable();
+            $table->boolean('vegetarian')->nullable()->comment('1 = yes, 0 = no');
+            $table->longText('bio')->nullable();
             $table->string('country')->nullable();
             $table->string('state')->nullable();
             $table->string('city')->nullable();
@@ -40,6 +44,7 @@ class CreateProfilesTable extends Migration
             $table->string('occupation')->nullable();
             $table->string('job_type')->nullable();
             $table->integer('salary')->unsigned()->nullable();
+            $table->string('currency')->nullable();
             $table->foreignId('user_id')->references('id')->on('users');
             $table->timestamps();
         });

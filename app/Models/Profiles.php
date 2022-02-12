@@ -13,13 +13,12 @@ class Profiles extends Model
         'user_id',
     ];
 
-    public function getDateOfBirthAttribute($date_of_birth){
-        if($date_of_birth != null){
+    public function getDateOfBirthAttribute($date_of_birth)
+    {
+        if ($date_of_birth != null || $date_of_birth != '') {
             return date("d-m-Y", strtotime($date_of_birth));
-        }else{
+        } else {
             return null;
         }
     }
-   
-    
 }

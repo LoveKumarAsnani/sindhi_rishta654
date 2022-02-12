@@ -28,10 +28,12 @@ class FriendController extends ApiController
 
 
         foreach ($friends as $key => $friend) {
+            $requestDate = $friends[$key]->request_date;
             $friends[$key] = User::find($friend->user_id);
 
             $friends[$key]->profile;
             $friends[$key]->pictures;
+            $friends[$key]['request_date'] = $requestDate;
         }
         return $this->showAll($friends);
     }
@@ -58,7 +60,8 @@ class FriendController extends ApiController
     public function friends()
     {
 
-
+        // $user = User::find(auth()->user()->id);
+        
         $friends = Friends::whereOr(['friend_user_id' => auth()->user()->id], ['user_id' => auth()->user()->id,])->where('status', Friends::ACCEPTED)->get();
 
         return $this->friendsOrRequests($friends);
@@ -67,6 +70,8 @@ class FriendController extends ApiController
 
     private function friendsOrRequests(Collection $friends)
     {
+        $friends = Friends::whereOr(['friend_user_id' => auth()->user()->id], ['user_id' => auth()->user()->id,])->where('status', Friends::ACCEPTED)->get();
+
         $oppositeUsers = [];
 
         foreach ($friends as $key => $friend) {
@@ -110,7 +115,6 @@ class FriendController extends ApiController
     {
         $request->validate([
             'friend_user_id' => 'required|integer',
-
         ]);
         $request->validate([
             'friend_user_id' => [
@@ -119,7 +123,7 @@ class FriendController extends ApiController
                     ->where('user_id', auth()->user()->id)
             ],
         ]);
-        $friend = Friends::where('user_id', $request->friend_user_id)->where('status', Friends::NEWW)->first();
+        $friend = Friends::where(['user_id' => $request->friend_user_id, 'friend_user_id' => auth()->user()->id,])->where('status', Friends::NEWW)->first();
         if ($friend) {
             $friend->status = Friends::ACCEPTED;
             $friend->save();

@@ -21,7 +21,7 @@ class CreateFriendsTable extends Migration
             $table->unique(['user_id', 'friend_user_id']);
             $table->foreign('friend_user_id')->references('id')->on('users');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->unsignedInteger('status')->default(Friends::NEWW);
+            $table->unsignedInteger('status')->default(Friends::NEWW)->comment(Friends::NEWW . '=New ' . Friends::ACCEPTED . '=Accept');
             $table->dateTime('request_date');
             $table->timestamps();
         });

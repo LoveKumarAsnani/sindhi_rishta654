@@ -26,12 +26,12 @@ class AuthController extends ApiController
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             // 'nick_name' => 'required|string',
-            'user_name' => 'required|string',
+
             'gender' => 'required|string',
             'profile_fill_by' => 'required|string',
             // 'name_visible' => 'required|bool',
             'email' => 'required|email|unique:users',
-            'user_name' => 'required|unique:users',
+            'user_name' => 'unique:users',
             'password' => 'required|min:6|confirmed',
             'phone_number' => 'required|min:9|unique:users',
         ], ['status' => false]);
@@ -46,7 +46,7 @@ class AuthController extends ApiController
         //  $data['device_notify_token'] = $request->device_notify_token;
         $data['phone_number_verified'] = User::PHONE_NUMBER_NOT_VERIFIED;
         $data['email_verified'] = User::EMAIL_NOT_VERIFIED;
-        if ($data['profile_picture'] == '1') {
+        if ($data['gender'] == '1') {
             $data['profile_picture'] = User::MALE_PROFILE_PICTURE;
         } else {
             $data['profile_picture'] = User::FEMALE;
@@ -84,6 +84,7 @@ class AuthController extends ApiController
 
         $response = [
             'data' => [],
+            'message' => 'Successfully Logout',
             'status' => true,
         ];
 

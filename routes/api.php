@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContactUs\ContactUsController;
 use App\Http\Controllers\Favorite\FavoriteController;
 use App\Models\Friends;
 use App\Models\User;
@@ -12,6 +13,8 @@ use App\Http\Controllers\Friend\FriendController;
 use App\Http\Controllers\Picture\PictureController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Videos\VideosController;
+use App\Models\ContactUs;
 use App\Models\Pictures;
 use App\Models\Profiles;
 
@@ -35,6 +38,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::name('verify')->get('users/verify/{token}', [AuthController::class, 'verify']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('submit-query', [ContactUsController::class, 'store']);
+Route::get('videos', [VideosController::class, 'index']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -66,8 +71,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/edit-profile', [ProfileController::class, 'update']);
     Route::get('/profile', [ProfileController::class, 'show']);
 
-    Route::post('add-pictures', [PictureController::class, 'store']);
-    Route::post('delete-picture', [PictureController::class, 'destroy']);
+    Route::post('/add-pictures', [PictureController::class, 'store']);
+    Route::post('/delete-picture', [PictureController::class, 'destroy']);
 });
 
 // Route::post('/login', function(Request $request){

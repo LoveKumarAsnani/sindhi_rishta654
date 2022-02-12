@@ -22,9 +22,16 @@ use Nette\Utils\Html;
 */
 
 Route::get('/testing', function () {
-   
+
    Mail::to('sagheerhzardari@gmail.com')->send(new UserCreated(new User));
 });
 
 
+Route::get('/friends/{id}', function ($id) {
+   $user = User::find($id);
+   $user->friends;
+   $user->related_friends;
 
+   $friends = $user->friends->merge($user->related_friends);
+   return $friends;
+});

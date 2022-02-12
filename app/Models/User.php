@@ -23,21 +23,30 @@ class User extends Authenticatable
     const USER_UN_VERFIED = '0';
     const USER_BLOCK = '2';
 
-    const MALE_PROFILE_PICTURE = 'dummy_picture.png';
-    const FEMALE_PROFILE_PICTURE = 'dummy_picture.png';
+    const MALE_PROFILE_PICTURE = 'dummy_picture_male.png';
+    const FEMALE_PROFILE_PICTURE = 'dummy_picture_female.png';
 
     const MALE = '1';
     const FEMALE = '2';
     const OTHER = '3';
 
-    const SELFF = '1';
-    const PARENTT = '2';
 
 
 
-    public function friends()
+
+    // public function friends()
+    // {
+    //     return $this->hasMany(Friends::class);
+    // }
+
+    function friends()
     {
-        return $this->hasMany(Friends::class);
+        return $this->belongsToMany(User::class, 'friends', 'user_id', 'friend_user_id');
+    }
+
+    function related_friends()
+    {
+        return $this->belongsToMany(User::class, 'friends', 'friend_user_id', 'user_id');
     }
 
     public function profile()
@@ -104,25 +113,25 @@ class User extends Authenticatable
 
     ];
 
-    public function getGender($gender)
-    {
-        if ($gender == 1) {
-            return User::MALE;
-        } else if ($gender == 2) {
-            return User::FEMALE;
-        } else {
-            return User::OTHER;
-        }
-    }
+    // public function getGender($gender)
+    // {
+    //     if ($gender == 1) {
+    //         return User::MALE;
+    //     } else if ($gender == 2) {
+    //         return User::FEMALE;
+    //     } else {
+    //         return User::OTHER;
+    //     }
+    // }
 
-    public function getProfileFillBy($profile_fill_by)
-    {
-        if ($profile_fill_by == 1) {
-            return User::SELFF;
-        } else if ($profile_fill_by == 2) {
-            return User::PARENTT;
-        }
-    }
+    // public function getProfileFillBy($profile_fill_by)
+    // {
+    //     if ($profile_fill_by == 1) {
+    //         return User::SELFF;
+    //     } else if ($profile_fill_by == 2) {
+    //         return User::PARENTT;
+    //     }
+    // }
 
     /**
      * The attributes that should be cast.

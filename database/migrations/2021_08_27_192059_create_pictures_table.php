@@ -16,6 +16,7 @@ class CreatePicturesTable extends Migration
         Schema::create('pictures', function (Blueprint $table) {
             $table->id();
             $table->string('image_name');
+            $table->string('image_active')->default('1')->comment('1 = active, 0 = block');
             $table->foreignid('user_id')->references('id')->on('users');
             $table->timestamps();
         });
