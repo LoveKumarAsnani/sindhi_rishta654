@@ -20,28 +20,28 @@ class PictureController extends ApiController
         //
     }
 
-    public function uploadProfilePicture(Request $request,)
-    {
+    // public function uploadProfilePicture(Request $request,)
+    // {
 
-        $id = auth()->user()->id;
-        $user = User::findOrFail($id);
+    //     $id = auth()->user()->id;
+    //     $user = User::findOrFail($id);
 
-        $picture = $request->picture;
-        $pictureDecode = json_decode($picture, true);
+    //     $picture = $request->picture;
+    //     $pictureDecode = json_decode($picture, true);
 
-        $response = file_put_contents('pictures/' . $pictureDecode['filename'], base64_decode($pictureDecode['file']));
+    //     $response = file_put_contents('pictures/' . $pictureDecode['filename'], base64_decode($pictureDecode['file']));
 
-        if ($response) {
-            $record = $user->profile_picture = $pictureDecode['filename'];
-            $user->save();
-        }
+    //     if ($response) {
+    //         $record = $user->profile_picture = $pictureDecode['filename'];
+    //         $user->save();
+    //     }
 
-        if ($record) {
-            return  $this->successResponse('Pictures Uploaded Successfully', 200);
-        } else {
-            return  $this->errorResponse('Something Went Wrong', 400);
-        }
-    }
+    //     if ($record) {
+    //         return  $this->successResponse('Pictures Uploaded Successfully', 200);
+    //     } else {
+    //         return  $this->errorResponse('Something Went Wrong', 400);
+    //     }
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -53,7 +53,7 @@ class PictureController extends ApiController
     {
         $count = Pictures::where('user_id', '=', auth()->user()->id)->count();
 
-        if ($count >= 4) {
+        if ($count <= 4) {
 
             $pictures = $request->pictures;
             $picturesArray = json_decode($pictures, true);
@@ -68,11 +68,11 @@ class PictureController extends ApiController
                 ]);
             }
 
-            if ($record) {
-                return  $this->successResponse('Pictures Uploaded Successfully', 200);
-            } else {
-                return  $this->errorResponse('Something Went Wrong', 400);
-            }
+            // if ($record) {
+            return  $this->successResponse('Pictures Uploaded Successfully', 200);
+            // } else {
+            //     return  $this->errorResponse('Something Went Wrong', 400);
+            // }
         } else {
             return  $this->errorResponse('You Cannot add more than four images.', 400);
         }

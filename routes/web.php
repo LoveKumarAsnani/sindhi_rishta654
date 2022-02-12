@@ -5,9 +5,11 @@ use App\Models\Friends;
 use App\Models\Profiles;
 use App\Models\User;
 use Facade\FlareClient\View;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Nette\Utils\Html;
 
 /*
@@ -35,3 +37,17 @@ Route::get('/friends/{id}', function ($id) {
    $friends = $user->friends->merge($user->related_friends);
    return $friends;
 });
+
+// Route::get('/get_image_url', function(){
+//    $user = User::find(1);
+//    $image = $user->profile_picture;
+
+//    //find path of the image in laravel storage
+//    $path = Storage::disk('public')->getDriver()->getAdapter()->applyPathPrefix($image);
+//    return $path;
+// });
+
+// //route for creating storage:link in serve with artisan command
+// Route::get('/storage_link', function () {
+//    Artisan::call('storage:link');
+// });
