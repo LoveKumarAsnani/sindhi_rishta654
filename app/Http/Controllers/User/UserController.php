@@ -22,17 +22,6 @@ class UserController extends ApiController
     public function index()
     {
 
-        // $users = DB::table('users')
-        //     ->leftJoin('user_favorites', 'users.id', '=', 'user_favorites.fav_user_id')
-        //     ->orWhere(['user_favorites.user_id', '=', auth()->user()->id], ['user_favorites.user_id', '<>', 'null'])
-        //     ->get();
-
-        // ->where(function ($query) {
-        //     $query->where('datefield', '<', $date)
-        //         ->orWhereNull('datefield');
-        // }
-        //there
-
         $userGender = User::findOrFail(auth()->user()->id);
         if ($userGender->gender == User::MALE) {
             $userGender =  User::FEMALE;
@@ -41,23 +30,52 @@ class UserController extends ApiController
         }
 
 
-
         $users = DB::select(DB::raw('select u.id, u.first_name,u.last_name,u.nick_name,u.user_name,u.email,u.phone_number,u.gender,u.profile_fill_by,u.profile_picture,u.profile_picture_active,u.is_email_verified,u.is_phone_number_verified,u.device_notify_token,u.status, f.user_id friend_user_id, f.status as friend_status, fv.user_id fav_user_id from users
         u left join friends f on u.id = f.friend_user_id left join
-        user_favorites fv on u.id = fv.fav_user_id where (fv.user_id = ' . auth()->user()->id . ' or fv.user_id is null) AND (f.user_id = ' . auth()->user()->id . ' or f.user_id is null) And u.gender = ' . $userGender . ' AND u.id !=' . auth()->user()->id . ' AND ( f.status = ' . Friends::NEWW . ' OR f.status is null)'));
+        user_favorites fv on u.id = fv.fav_user_id where (fv.user_id = ' . auth()->user()->id . ' or fv.user_id is null) AND (f.user_id = ' . auth()->user()->id . ' or f.user_id is null)  AND u.gender = ' . $userGender . ' AND u.status NOT IN (2) AND u.id !=' . auth()->user()->id . ' AND ( f.status = ' . Friends::NEWW . ' OR f.status is null)'));
 
 
-        foreach ($users as $key => $user) {
-            $userProfile = Profiles::Where([
-                'user_id' => $user->id,
-            ])->first();
-            $user->profile = $userProfile;
+        $friends = Friends::where(['friend_user_id' => auth()->user()->id], ['status', Friends::ACCEPTED])->get();
 
-            $userPictures = Pictures::Where([
-                'user_id' => $user->id,
-            ])->get();
-            $user->pictures = $userPictures;
+
+        $filtered = [];
+        foreach ($users as $user) {
+            $isFriend = false;
+            foreach ($friends as $friend) {
+                if ($user->id == $friend->user_id) {
+                    $isFriend = true;
+                }
+            }
+            if (!$isFriend) {
+                $userProfile = Profiles::Where([
+                    'user_id' => $user->id,
+                ])->first();
+                $user->profile = $userProfile;
+
+                $userPictures = Pictures::Where([
+                    'user_id' => $user->id,
+                ])->get();
+                $user->pictures = $userPictures;
+                $filtered[] = $user;
+            }
         }
+
+        $users = $filtered;
+
+
+
+        // foreach ($users as $key => $user) {
+        //     $userProfile = Profiles::Where([
+        //         'user_id' => $user->id,
+        //     ])->first();
+        //     $user->profile = $userProfile;
+
+        //     $userPictures = Pictures::Where([
+        //         'user_id' => $user->id,
+        //     ])->get();
+        //     $user->pictures = $userPictures;
+        // }
+
         return response()->json([
             'data' => $users,
             'status' => true,

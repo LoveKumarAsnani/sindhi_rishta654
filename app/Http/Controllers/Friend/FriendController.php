@@ -61,7 +61,7 @@ class FriendController extends ApiController
     {
 
         // $user = User::find(auth()->user()->id);
-        
+
         $friends = Friends::whereOr(['friend_user_id' => auth()->user()->id], ['user_id' => auth()->user()->id,])->where('status', Friends::ACCEPTED)->get();
 
         return $this->friendsOrRequests($friends);
@@ -200,8 +200,9 @@ class FriendController extends ApiController
         $friend = Friends::where('user_id', $request->id)->where('friend_user_id', auth()->user()->id)->where('status', Friends::NEWW)->first();
         // return $this->showOne($friend);
         if ($friend) {
-            $friend->status = Friends::DENIED;
-            $friend->save();
+            // $friend->status = Friends::DENIED;
+            // $friend->save();
+            $friend->delete();
             return $this->successResponse('Request Deleted', 200);
         } else {
             return $this->errorResponse('Request not found', 404);
