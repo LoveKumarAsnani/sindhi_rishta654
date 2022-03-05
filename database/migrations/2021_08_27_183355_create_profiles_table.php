@@ -21,6 +21,7 @@ class CreateProfilesTable extends Migration
             $table->string('marital_status')->nullable();
             $table->string('mother_tongue')->nullable();
             $table->string('physical_status')->nullable();
+            $table->string('skin_color')->nullable();
             $table->boolean('alcoholic')->nullable()->comment('1 = yes, 0 = no');
             $table->string('weight')->nullable();
             $table->string('height')->nullable();
@@ -40,6 +41,7 @@ class CreateProfilesTable extends Migration
             $table->integer('sisters')->unsigned()->nullable();
             $table->integer('brothers_married')->unsigned()->nullable();
             $table->integer('sisters_married')->unsigned()->nullable();
+            $table->string('guardian_phone_number')->nullable();
             $table->string('highest_education')->nullable();
             $table->string('occupation')->nullable();
             $table->string('job_type')->nullable();

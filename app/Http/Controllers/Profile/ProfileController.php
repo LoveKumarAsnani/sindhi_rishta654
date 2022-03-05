@@ -133,6 +133,12 @@ class ProfileController extends ApiController
         if ($request->has('vegetarian')) {
             $profile->vegetarian = $request->vegetarian;
         }
+        if ($request->has('skin_color')) {
+            $profile->skin_color = $request->skin_color;
+        }
+        if ($request->has('guardian_phone_number')) {
+            $profile->guardian_phone_number = $request->guardian_phone_number;
+        }
 
         if ($request->has('country')) {
             $profile->country = $request->country;
