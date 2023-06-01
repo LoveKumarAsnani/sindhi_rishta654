@@ -9,9 +9,11 @@ use App\Models\Pictures;
 use App\Models\Profiles;
 use App\Models\User;
 use App\Models\UserFavorites;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class UserController extends ApiController
@@ -76,15 +78,90 @@ class UserController extends ApiController
 
     public function index()
     {
+        $currentUser = auth()->user();
+        $gender =  $currentUser->gender == 1 ? 2 : 1;
 
-        $userr = User::findOrFail(auth()->user()->id);
-        if ($userr->gender == User::MALE) {
-            $gender =  User::FEMALE;
-        } else {
-            $gender = USER::MALE;
+        if ($currentUser->status == 0) {
+            return response()->json([
+                'data' => [],
+                'status' => false,
+                'statusCode' => 501,
+                'title' => 'Not verified',
+                'message' => 'You are currently unable to view other matches, because your request is pending for approval.'
+            ], 501);
+        } else if ($currentUser->status == 2) {
+            return response()->json([
+                'data' => [],
+                'status' => false,
+                'statusCode' => 501,
+                'title' => 'Blocked',
+                'message' => 'Your profile has been blocked due to misconduct'
+            ], 501);
+        }
+        $users = User::where('status', 1)->where("gender", $gender)->get();
+
+        $usersArray = array();
+
+        foreach ($users as $key => $user) {
+
+            $user->profile = $user->profile;
+            $user->pictures = $user->pictures;
+            $user->favourite =  UserFavorites::where([
+                ['fav_user_id', '=', $user->id],
+                ['user_id', '=', auth()->user()->id],
+
+            ])->first();
+
+            $newFriend = Friends::where([
+                ['friend_user_id', '=', $user->id],
+                ['user_id', '=', auth()->user()->id],
+                ['status', '=', 1],
+            ])->first();
+
+            $friend = Friends::where(function ($query) use ($user) {
+                $query->where([
+                    ['friend_user_id', '=', auth()->user()->id],
+                    ['user_id', '=', $user->id],
+                    ['status', '=', 2],
+                ]);
+            })->orWhere(function ($query) use ($user) {
+                $query->where([
+                    ['friend_user_id', '=', $user->id],
+                    ['user_id', '=', auth()->user()->id],
+                    ['status', '=', 2],
+                ]);
+            })->first();
+
+            if (!$friend) {
+                $user->friend = $newFriend;
+                $usersArray[] = $user;
+            } else {
+                unset($users[$key]);
+            }
         }
 
-        $users  = User::where(['gender' => $gender], ['status', '!=', '2'])->get();
+        return response()->json([
+            'data' => array_values($users->toArray()),
+            'status' => true,
+            'statusCode' => 200,
+            'message' => 'successfully Listed'
+        ]);
+    }
+
+
+
+
+
+    public function indexx()
+    {
+
+        $gender =  auth()->user()->gender == User::MALE ? User::FEMALE : User::FEMALE;
+
+        $users = User::where([
+            ['gender', '=', $gender],
+            ['status', '!=', '2'],
+        ])->get();
+
 
         foreach ($users as $key => $user) {
             //get profile of user
@@ -141,10 +218,6 @@ class UserController extends ApiController
         }
 
         $users = $new_users;
-
-
-
-
         return response()->json([
             'data' => $users,
             'status' => true,
@@ -152,6 +225,10 @@ class UserController extends ApiController
             'message' => 'successfully Listed'
         ]);
     }
+
+
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -186,6 +263,8 @@ class UserController extends ApiController
         return $this->showOne($user);
     }
 
+
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -194,48 +273,55 @@ class UserController extends ApiController
      */
     public function edit(Request $request, User $user)
     {
+        try {
 
-        $user = User::findOrFail(auth()->user()->id);
-        if ($user) {
+            $user = User::findOrFail(auth()->user()->id);
+            if ($user) {
 
 
-            if ($request->image_object) {
+                if ($request->image_object) {
 
-                $picture = $request->image_object;
-                $pictureDecode = json_decode($picture, true);
-                // return $pictureDecode;
+                    $picture = $request->image_object;
+                    $pictureDecode = json_decode($picture, true);
 
-                $response = file_put_contents('pictures/' . $pictureDecode['imageName'], base64_decode($pictureDecode['image']));
+                    $uniqueName = time() . $pictureDecode['imageName'];
 
-                if ($response) {
+                    $response = file_put_contents('pictures/' . $uniqueName, base64_decode($pictureDecode['image']));
 
-                    $user->profile_picture = $pictureDecode['imageName'];
+                    if ($response) {
+                        $image_path = public_path("\pictures\\") . $user->profile_picture;
+                        if (File::exists($image_path)) {
+                            File::delete($image_path);
+                        }
+
+                        $user->profile_picture = $uniqueName;
+                    }
                 }
-            }
 
-            if ($request->first_name) {
-                $user->first_name = $request->first_name;
-            }
-            if ($request->last_name) {
-                $user->last_name = $request->last_name;
-            }
-            if ($request->nick_name) {
-                $user->nick_name = $request->nick_name;
-            }
-            if ($request->gender) {
-                $user->gender = $request->gender;
-            }
+                if ($request->first_name) {
+                    $user->first_name = $request->first_name;
+                }
+                if ($request->last_name) {
+                    $user->last_name = $request->last_name;
+                }
 
-            // if (!$user->isDirty()) {
-            //     return $this->errorResponse('You Need to Specify Different Value to Update', 422);
-            // }
+                if ($request->gender) {
+                    $user->gender = $request->gender;
+                }
+
+                // if (!$user->isDirty()) {
+                //     return $this->errorResponse('You Need to Specify Different Value to Update', 422);
+                // }
 
 
-            $user->save();
+                $user->save();
 
-            return  $this->showOne($user);
-        } else {
-            return $this->errorResponse('User not found', 404);
+                return  $this->showOne($user);
+            } else {
+                return $this->errorResponse('User not found', 404);
+            }
+        } catch (Exception $ex) {
+            return $this->errorResponse($ex->getMessage(), 404);
         }
     }
 
@@ -259,9 +345,27 @@ class UserController extends ApiController
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function deleteUser()
     {
-        //
+        try {
+
+            $user = auth()->user();
+
+            if ($user) {
+
+                $user->delete();
+                return response()->json([
+                    'data' => $user,
+                    'status' => true,
+                    'statusCode' => 200,
+                    'message' => 'successfully Listed'
+                ]);
+            } else {
+                return $this->errorResponse('User not found', 404);
+            }
+        } catch (Exception $ex) {
+            return $this->errorResponse($ex->getMessage(), 404);
+        }
     }
 }
 

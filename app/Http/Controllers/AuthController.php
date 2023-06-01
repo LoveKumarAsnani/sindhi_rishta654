@@ -6,6 +6,7 @@ use App\Mail\ResetPassword;
 use App\Mail\UserCreated;
 use App\Models\Profiles;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -25,8 +26,6 @@ class AuthController extends ApiController
         $request->validate([
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            // 'nick_name' => 'required|string',
-
             'gender' => 'required|string',
             'profile_fill_by' => 'required|string',
             // 'name_visible' => 'required|bool',
@@ -36,42 +35,43 @@ class AuthController extends ApiController
             'phone_number' => 'required|min:9|unique:users',
         ], ['status' => false]);
 
-        $data = $request->all();
-        $data['password'] = bcrypt($request->password);
-        $data['status'] = User::USER_UN_VERFIED;
-        $data['verification_token'] = User::generateVerificationCode();
-        //  $data['gender'] = $request->gender;
-        //  $data['profile_fill_by'] = $request->profile_fill_by;
-        //  $data['name_visible'] = $request->name_visible;
-        //  $data['device_notify_token'] = $request->device_notify_token;
-        $data['phone_number_verified'] = User::PHONE_NUMBER_NOT_VERIFIED;
-        $data['email_verified'] = User::EMAIL_NOT_VERIFIED;
-        if ($data['gender'] == '1') {
-            $data['profile_picture'] = User::MALE_PROFILE_PICTURE;
-        } else {
-            $data['profile_picture'] = User::FEMALE;
+        try {
+
+            $data = $request->all();
+            $data['password'] = bcrypt($request->password);
+            $data['status'] = User::USER_UN_VERFIED;
+            $data['verification_token'] = User::generateVerificationCode();
+            $data['phone_number_verified'] = User::PHONE_NUMBER_NOT_VERIFIED;
+            $data['email_verified'] = User::EMAIL_NOT_VERIFIED;
+            if ($data['gender'] == '1') {
+                $data['profile_picture'] = User::MALE_PROFILE_PICTURE;
+            } else {
+                $data['profile_picture'] = User::FEMALE_PROFILE_PICTURE;
+            }
+            // $data['profile_picture'] = User::MALE_PROFILE_PICTURE;
+
+            $user = User::create($data);
+
+            if ($user) {
+                Profiles::create([
+                    'user_id' =>  $user->id
+                ]);
+            }
+
+
+            $token = $user->createToken('myapptoken')->plainTextToken;
+
+
+            $response = [
+                'data' => $user,
+                'token' => $token,
+                'status' => true,
+            ];
+
+            return response($response, 201);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to Create Account', 404);
         }
-        // $data['profile_picture'] = User::MALE_PROFILE_PICTURE;
-
-        $user = User::create($data);
-
-        if ($user) {
-            Profiles::create([
-                'user_id' =>  $user->id
-            ]);
-        }
-
-
-        $token = $user->createToken('myapptoken')->plainTextToken;
-
-
-        $response = [
-            'data' => $user,
-            'token' => $token,
-            'status' => true,
-        ];
-
-        return response($response, 201);
     }
 
 
@@ -101,18 +101,18 @@ class AuthController extends ApiController
             'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $fields['email'])->first();
+        $user = User::where('email', $fields['email'])->orWhere('user_name', $fields['email'])->first();
         if (!$user) {
             return response()->json([
                 'error' =>
-                ['email' => ['email does not match',]]
+                ['email' => ['Credentials does not match',]]
             ], 401);
         }
 
         if (!Hash::check($fields['password'], $user->password)) {
             return response()->json([
                 'error' =>
-                ['password' => ['Password does not match',]]
+                ['password' => ['Credentials does not match',]]
             ], 401);
         }
 
@@ -152,21 +152,27 @@ class AuthController extends ApiController
 
     public function forgotPassword(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|exists:users',
-        ]);
+        try {
 
-        $uniqueId = User::uniqueId();
+            $request->validate([
+                'email' => 'required|email|exists:users',
+                
+            ]);
 
-        // Mail::send('about.emailconfirmation', ['data' => 'Unique id is : '.$uniqueId]);
+            $uniqueId = User::uniqueId();
 
-        Mail::to($request->email)->send(new ResetPassword($uniqueId));
+            // Mail::send('about.emailconfirmation', ['data' => 'Unique id is : '.$uniqueId]);
 
-        $response = [
-            'unique_id' => $uniqueId,
-            'status' => true,
-            'message' => 'Token Sent on Your Email Address Please Check'
-        ];
+            Mail::to($request->email)->send(new ResetPassword($uniqueId));
+
+            $response = [
+                'unique_id' => $uniqueId,
+                'status' => true,
+                'message' => 'Token Sent on Your Email Address Please Check'
+            ];
+        } catch (Exception $ex) {
+            return $this->errorResponse('Something Went Wrong.', 404);
+        }
 
         return response($response, 200);
     }

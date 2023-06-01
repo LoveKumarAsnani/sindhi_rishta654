@@ -96,6 +96,10 @@ class ProfileController extends ApiController
             $profile->caste = $request->caste;
         }
 
+        if ($request->has('religion')) {
+            $profile->religion = $request->religion;
+        }
+
         if ($request->has('date_of_birth')) {
 
             $newDate = date("Y-m-d H:i:s", strtotime($request->date_of_birth));
@@ -199,6 +203,9 @@ class ProfileController extends ApiController
         if ($request->has('highest_education')) {
             $profile->highest_education = $request->highest_education;
         }
+        if ($request->has('degree')) {
+            $profile->degree = $request->degree;
+        }
 
         if ($request->has('occupation')) {
             $profile->occupation = $request->occupation;
@@ -210,6 +217,16 @@ class ProfileController extends ApiController
 
         if ($request->has('salary')) {
             $profile->salary = $request->salary;
+        }
+
+        if ($request->has('father_alive')) {
+            $profile->father_alive = $request->father_alive;
+        }
+        if ($request->has('mother_alive')) {
+            $profile->mother_alive = $request->mother_alive;
+        }
+        if ($request->has('horoscope')) {
+            $profile->horoscope = $request->horoscope;
         }
 
         // if (!$profile->isDirty()) {

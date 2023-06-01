@@ -17,6 +17,7 @@ use App\Http\Controllers\Videos\VideosController;
 use App\Models\ContactUs;
 use App\Models\Pictures;
 use App\Models\Profiles;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,18 @@ use App\Models\Profiles;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
+Route::get('/clear', function () {
+
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('config:cache');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    Artisan::call('route:cache');
+
+    return "Cleared!";
+});
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -50,6 +63,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/upload-profile-picture', [PictureController::class, 'uploadProfilePicture']);
     Route::post('/edit-user', [UserController::class, 'edit']);
     Route::get('/user-info', [UserController::class, 'show']);
+    Route::get('/user-delete', [UserController::class, 'deleteUser']);
 
 
     Route::post('/send-friend-request', [FriendController::class, 'store']);

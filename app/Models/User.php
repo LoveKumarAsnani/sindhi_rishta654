@@ -32,7 +32,17 @@ class User extends Authenticatable
 
 
 
+    public function opposite_gender()
+    {
 
+
+        // $userr = User::findOrFail(auth()->user()->id);
+        // if ($userr->gender == User::MALE) {
+        //     $gender =  User::FEMALE;
+        // } else  if ($userr->gender == User::FEMALE) {
+        //     $gender = USER::MALE;
+        // }
+    }
 
     // public function friends()
     // {
@@ -73,10 +83,11 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name',
         'last_name',
-        'nick_name',
+
         'user_name',
         'email',
         'password',
+        'type',
         'phone_number',
         'is_email_verified',
         'is_phone_number_verified',

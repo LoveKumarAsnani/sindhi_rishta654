@@ -17,6 +17,7 @@ class CreateProfilesTable extends Migration
             $table->id();
             $table->string('surname')->nullable();
             $table->string('caste')->nullable();
+            $table->string('religion')->nullable();
             $table->dateTime('date_of_birth')->nullable();
             $table->string('marital_status')->nullable();
             $table->string('mother_tongue')->nullable();
@@ -43,11 +44,15 @@ class CreateProfilesTable extends Migration
             $table->integer('sisters_married')->unsigned()->nullable();
             $table->string('guardian_phone_number')->nullable();
             $table->string('highest_education')->nullable();
+            $table->string('degree')->nullable();
             $table->string('occupation')->nullable();
             $table->string('job_type')->nullable();
-            $table->integer('salary')->unsigned()->nullable();
+            $table->bigInteger('salary')->unsigned()->nullable();
             $table->string('currency')->nullable();
-            $table->foreignId('user_id')->references('id')->on('users');
+            $table->boolean('father_alive')->nullable()->comment('1 = yes, 0 = no');
+            $table->boolean('mother_alive')->nullable()->comment('1 = yes, 0 = no');
+            $table->time('horoscope')->nullable();
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }

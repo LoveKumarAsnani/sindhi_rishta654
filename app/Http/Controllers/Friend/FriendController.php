@@ -135,7 +135,7 @@ class FriendController extends ApiController
                 'request_date' =>  Carbon::now()
             ]);
             if ($friend) {
-                return $this->showOne($friend, 200, 'Friend Request Successfully Sent');
+                return $this->showOne($friend, 200, 'Match Request Successfully Sent');
             } else {
                 return $this->errorResponse("Request Not Sent", 404);
             }
@@ -179,7 +179,7 @@ class FriendController extends ApiController
         if ($friend) {
             $friend->status = Friends::ACCEPTED;
             $friend->save();
-            return $this->successResponse('Request Accepted', 200);
+            return $this->successResponse('Match Request Accepted', 200);
         } else {
             return $this->errorResponse('Request not found', 404);
         }
@@ -189,7 +189,7 @@ class FriendController extends ApiController
         $friend = Friends::where('user_id', $request->id)->orWhere('friend_user_id', auth()->user()->id)->where('user_id', auth()->user()->id)->orWhere('friend_user_id', $request->id)->where('status', Friends::ACCEPTED)->delete();
 
         if ($friend) {
-            return $this->successResponse('SuccessFully Removed From Friend List', 200);
+            return $this->successResponse('SuccessFully Removed From Match List', 200);
         } else {
             return $this->errorResponse('Friend Not Found', 404);
         }
@@ -203,7 +203,7 @@ class FriendController extends ApiController
             // $friend->status = Friends::DENIED;
             // $friend->save();
             $friend->delete();
-            return $this->successResponse('Request Deleted', 200);
+            return $this->successResponse('Match Request Deleted', 200);
         } else {
             return $this->errorResponse('Request not found', 404);
         }
@@ -239,9 +239,9 @@ class FriendController extends ApiController
             'status' => Friends::NEWW
         ])->delete();
         if ($friend) {
-            return $this->successResponse('Cancel Friend Request', 200);
+            return $this->successResponse('Cancel Match Request', 200);
         } else {
-            return $this->errorResponse("Not Found as Friend", 404);
+            return $this->errorResponse("Not Found as Match", 404);
         }
     }
 }

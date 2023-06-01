@@ -18,10 +18,10 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('nick_name')->nullable();
             $table->string('user_name')->unique();
             $table->string('email')->unique();
             $table->string('password');
+            $table->enum('type', ['0', '1'])->default('1')->comment("1 for user, 0 for admin");
             $table->string('phone_number')->unique();
             $table->unsignedInteger('gender')->comment(User::MALE . ' = Male, ' . User::FEMALE . ' = Female');
             $table->string('profile_fill_by');

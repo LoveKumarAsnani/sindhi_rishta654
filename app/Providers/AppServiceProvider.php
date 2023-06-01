@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Mail\UserCreated;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,9 +27,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        User::created(function($user){
-            Mail::to($user)->send(new UserCreated($user));
+        User::created(function ($user) {
+            try {
+                Mail::to($user)->send(new UserCreated($user));
+            } catch (Exception $e) {
+            }
         });
-
     }
 }

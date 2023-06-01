@@ -1,0 +1,304 @@
+@font-face {
+    font-family: "Visby";
+    src: url("../fonts/visbylight.woff") format("woff");
+    font-weight: 200;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Visby";
+    src: url("../fonts/visbymedium.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Visby";
+    src: url("../fonts/visbymedium.woff") format("woff");
+    font-weight: 600;
+    font-style: normal;
+}
+
+* {
+    font-family: "Visby", sans-serif;
+}
+
+.formSection {
+    padding: 80px 0;
+}
+
+.formSection .mainLogo img {
+    width: 100%;
+}
+
+.formSection h2 {
+    font-weight: 200;
+    font-size: 24px;
+    color: #A1A1A2;
+    padding-left: 30px;
+}
+
+.detailForm {
+    padding-top: 40px;
+}
+
+.detailForm .disclaimer {
+    background: #A3C83A;
+    border-radius: 18px;
+    padding: 25px;
+}
+
+.detailForm .disclaimer span {
+    font-weight: 600;
+}
+
+.detailForm .disclaimer p {
+    font-size: 14px;
+    margin: 0;
+}
+
+.detailForm .getStarted {
+    background: #F58420;
+    border: 0;
+    margin: 0 auto;
+    display: block;
+    border-radius: 30px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    margin-top: 20px;
+}
+
+.detailForm .fieldsType,
+.detailForm select,
+select {
+    background: #F3F4F4 !important;
+    padding: 25px 15px;
+    border-radius: 20px;
+    box-shadow: 0.436px 4.981px 10px 0px rgba(0, 0, 0, 0.08) !important;
+    font-size: 20px;
+    font-weight: 200;
+    color: #8A8B8C;
+    border: 2px solid #E2E2E2 !important;
+    width: 100%;
+}
+
+
+/******/
+
+#regForm {
+    background-color: #ffffff;
+    margin: 0px auto;
+    border-radius: 10px;
+}
+
+.tab {
+    display: none
+}
+
+button {
+    background-color: #4CAF50;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 17px;
+    cursor: pointer
+}
+
+button:hover {
+    opacity: 0.8
+}
+
+#prevBtn {
+    background-color: #bbbbbb
+}
+
+.step {
+    height: auto;
+    width: 20%;
+    margin: 0 2px;
+    border: none;
+    border-radius: 0;
+    display: inline-block;
+    opacity: 0.5;
+    font-weight: 200;
+    text-transform: uppercase;
+}
+
+.step.active {
+    opacity: 1;
+    color: #A1A1A2;
+    font-weight: 600;
+    border-bottom: 1px solid #A1A1A2;
+}
+
+.all-steps {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    display: flex;
+}
+
+.thanks-message {
+    display: none
+}
+
+.container {
+    display: block;
+    position: relative;
+    margin-bottom: 12px;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.tab h2 {
+    color: #F58420;
+    font-weight: 600;
+    text-align: center;
+    margin: 80px 0 20px;
+}
+
+.tab p {
+    color: #A1A1A2;
+    font-weight: 200;
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 50px;
+}
+
+.tabBox {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 18px 10px;
+    border-radius: 25px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.greyBox {
+    background: #A1A1A2;
+}
+
+.orangeBox {
+    background: #F58420;
+}
+
+.greenBox {
+    background: #A3C83A;
+}
+
+#nextprevious {
+    margin: 80px 0 30px;
+}
+
+#nextprevious #nextBtn {
+    background: #F58420;
+    border: 0;
+    margin: 0 auto;
+    display: block;
+    border-radius: 30px;
+    text-transform: uppercase;
+    padding: 10px 10px;
+    margin-top: 20px;
+    max-width: 150px;
+    width: 100%;
+}
+
+select:focus-visible {
+    border: none;
+    outline: none;
+}
+
+#regForm img {
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    margin: 30px auto;
+    display: block;
+}
+
+#regForm h3 {
+    text-align: center;
+    font-weight: 600;
+    margin: 50px 0;
+}
+
+#regForm ul {
+    list-style: none;
+    text-align: center;
+    padding: 0;
+    margin: 0 0 30px;
+    color: #A1A1A2;
+    font-weight: 200;
+}
+
+#regForm .nav-item {
+    width: 25%;
+}
+
+#regForm .nav-item .nav-link {
+    width: calc(100% - 10px);
+    border-radius: 25px;
+    padding: 18px 10px;
+    text-align: center;
+    font-weight: 600;
+    margin: 0 auto;
+    color: #fff;
+}
+
+#pills-gold-tab {
+    background: #d9c00b;
+}
+
+#pills-blue-tab {
+    background: #9080f9;
+}
+
+#pills-green-tab {
+    background: #79d162;
+}
+
+#pills-orange-tab {
+    background: #edad27;
+}
+
+#pills-gold h3 {
+    color: #7C8416;
+}
+
+#pills-blue h3 {
+    color: #211284;
+}
+
+#pills-green h3 {
+    color: #2D8316;
+}
+
+#pills-orange h3 {
+    color: #CC941E;
+}
+
+.detailBtn {
+    background: #CC941E;
+    border-radius: 25px;
+    padding: 18px 10px;
+    text-align: center;
+    font-weight: 600;
+    margin: 0 auto;
+    color: #fff;
+    text-decoration: none;
+    margin-top: 10px;
+    display: block;
+}
+
+.downloadeBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    padding: 10px;
+    font-size: 1rem;
+    width: fit-content;
+}

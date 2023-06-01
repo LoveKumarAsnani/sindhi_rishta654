@@ -1,11 +1,13 @@
 <?php
+
 namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
-trait ApiResponser{
-    protected function showOne(Model $model ,$code = 200 ,$message='Successful')
+trait ApiResponser
+{
+    protected function showOne(Model $model, $code = 200, $message = 'Successful')
     {
         return response()->json([
             'data' => $model,
@@ -14,7 +16,7 @@ trait ApiResponser{
         ], $code);
     }
 
-    protected function showAll(Collection $collection ,$code =200)
+    protected function showAll(Collection $collection, $code = 200)
     {
         return response()->json([
             'data' => $collection,
@@ -23,25 +25,23 @@ trait ApiResponser{
         ], $code);
     }
 
-    protected function errorResponse($message ,$code)
+    protected function errorResponse($message, $code)
     {
         return response()->json([
             'error' => $message,
             'status' => false,
-        ],$code);
+        ], $code);
     }
-    protected function successResponse($message ,$code)
+    protected function successResponse($message, $code)
     {
         return response()->json([
             'message' => $message,
             'status' => true,
-        ],$code);
+        ], $code);
     }
 
-    protected function showMessage($message ,$code =200)
+    protected function showMessage($message, $code = 200)
     {
-        return response()->json(['data'=>$message],$code);
+        return response()->json(['data' => $message], $code);
     }
-
-
 }

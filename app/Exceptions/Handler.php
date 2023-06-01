@@ -54,14 +54,14 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-        if($exception instanceof ValidationException){
-           return $this->convertValidationExceptionToResponse($exception,$request);
+        if ($exception instanceof ValidationException) {
+            return $this->convertValidationExceptionToResponse($exception, $request);
         }
 
-        if($exception instanceof ModelNotFoundException){
-            $modelName=strtolower(class_basename($exception->getModel()));
+        if ($exception instanceof ModelNotFoundException) {
+            $modelName = strtolower(class_basename($exception->getModel()));
 
-          return  $this->errorResponse("Does not exists any {$modelName} with the specified identificator",404);
+            return  $this->errorResponse("Does not exists any {$modelName} with the specified identificator", 404);
         }
 
         // if($exception instanceof AuthenticationException){
@@ -70,36 +70,35 @@ class Handler extends ExceptionHandler
         // if($exception instanceof AuthorizationException){
         //     return $this->errorResponse($exception->getMessage(),403);
         // }
-        if($exception instanceof NotFoundHttpException){
-            return $this->errorResponse('The specified url cannot found',404);
+        if ($exception instanceof NotFoundHttpException) {
+            // return $this->errorResponse('The specified url cannot found', 404);
+            return redirect()->route('dashboard');
         }
-        if($exception instanceof MethodNotAllowedHttpException){
-            return $this->errorResponse('The specified method for the requestes is invalid',405);
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            return $this->errorResponse('The specified method for the requestes is invalid', 405);
         }
-        if($exception instanceof HttpException){
-            return $this->errorResponse($exception->getMessage(),$exception->getStatusCode());
+        if ($exception instanceof HttpException) {
+            return $this->errorResponse($exception->getMessage(), $exception->getStatusCode());
         }
-        if($exception instanceof QueryException){
-            $errorCode=$exception->errorInfo[1];
-            if($errorCode == 1451){
-                return $this->errorResponse('Cannot remove this resource parmanently, it is related with any other resources',409);
+        if ($exception instanceof QueryException) {
+            $errorCode = $exception->errorInfo[1];
+            if ($errorCode == 1451) {
+                return $this->errorResponse('Cannot remove this resource parmanently, it is related with any other resources', 409);
             }
-           
         }
 
-       // return $this->errorResponse('Unexpected Exception. Try Later',500);
+        // return $this->errorResponse('Unexpected Exception. Try Later',500);
 
 
-        return parent::render($request,$exception);
+        return parent::render($request, $exception);
     }
     protected function convertValidationExceptionToResponse(ValidationException $e, $request)
     {
-        $errors= $e->validator->errors()->getMessages();
-        return $this->errorResponse($errors,422);
+        $errors = $e->validator->errors()->getMessages();
+        return $this->errorResponse($errors, 422);
     }
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-        return $this->errorResponse('Unauthenticated.',401);
-
+        return $this->errorResponse('Unauthenticated.', 401);
     }
 }

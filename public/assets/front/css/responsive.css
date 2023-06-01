@@ -1,0 +1,98 @@
+@media(max-width:991px) {
+
+    .formSection {
+        padding: 30px 0;
+    }
+
+    .formSection h2 {
+        padding-left: 0;
+        margin: 20px 0;
+        font-size: 18px;
+    }
+}
+
+
+@media (max-width: 767px) {
+    .formSection .mainLogo img {
+        width: 70%;
+    }
+
+    .sign-content h3 {
+        font-size: 40px;
+    }
+
+    .wizard .nav-tabs>li a i {
+        display: none;
+    }
+
+    .signup-logo-header .navbar-toggle {
+        margin: 0;
+        margin-top: 8px;
+    }
+
+    .signup-logo-header .logo_area {
+        margin-top: 0;
+    }
+
+    .signup-logo-header .header-flex {
+        display: block;
+    }
+
+    .step {
+        font-size: 16px;
+    }
+
+    .tab h2 {
+        margin: 40px 0 20px;
+    }
+
+    .tab p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .detailForm input,
+    .detailForm select,
+    select {
+        padding: 15px 15px;
+    }
+
+    .tabBox {
+        font-size: 18px;
+    }
+
+    #nextprevious {
+        margin: 30px 0;
+    }
+
+    #regForm ul {
+        font-size: 16px;
+    }
+
+}
+
+@media (max-width: 480px) {
+    #regForm .nav-item {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    #regForm h3 {
+        margin: 50px 0 20px;
+    }
+
+    .extrabtn .row .col-lg-6 {
+        text-align: center !important;
+        margin-bottom: 15px;
+    }
+    
+    .tabBox {
+        font-size: 13px;
+        padding: 10px 5px;
+        margin-bottom: 10px;
+    }
+    
+    .detailForm input, .detailForm select, select{
+            padding: 5px 5px;
+    }
+}

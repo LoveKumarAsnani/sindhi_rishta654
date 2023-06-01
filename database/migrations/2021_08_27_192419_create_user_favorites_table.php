@@ -18,8 +18,8 @@ class CreateUserFavoritesTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('fav_user_id');
             $table->unique(['user_id', 'fav_user_id']);
-            $table->foreign('fav_user_id')->references('id')->on('users');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('fav_user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             // $table->primary(['user_id', 'id']);
             $table->timestamps();
         });

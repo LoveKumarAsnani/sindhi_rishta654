@@ -22,23 +22,65 @@ class FavoriteController extends ApiController
      */
     public function index()
     {
-        $users = DB::select(DB::raw('select u.id, u.first_name,u.last_name,u.nick_name,u.user_name,u.email,u.phone_number,u.gender,u.profile_fill_by,u.profile_picture,u.profile_picture_active,u.is_email_verified,u.is_phone_number_verified,u.device_notify_token,u.status, f.user_id friend_user_id, f.status as friend_status, fv.user_id fav_user_id from users
-    u left join friends f on u.id = f.friend_user_id left join
-    user_favorites fv on u.id = fv.fav_user_id where (fv.user_id = ' . auth()->user()->id . ') AND (f.user_id = ' . auth()->user()->id . ' or f.user_id is null) AND u.id !=' . auth()->user()->id . ''));
+        //     $users = DB::select(DB::raw('select u.id, u.first_name,u.last_name,u.nick_name,u.user_name,u.email,u.phone_number,u.gender,u.profile_fill_by,u.profile_picture,u.profile_picture_active,u.is_email_verified,u.is_phone_number_verified,u.device_notify_token,u.status, f.user_id friend_user_id, f.status as friend_status, fv.user_id fav_user_id from users
+        // u left join friends f on u.id = f.friend_user_id left join
+        // user_favorites fv on u.id = fv.fav_user_id where (fv.user_id = ' . auth()->user()->id . ') AND (f.user_id = ' . auth()->user()->id . ' or f.user_id is null) AND u.id !=' . auth()->user()->id . ''));
 
-        foreach ($users as $key => $user) {
-            $userProfile = Profiles::Where([
-                'user_id' => $user->id,
+        //     foreach ($users as $key => $user) {
+        //         $userProfile = Profiles::Where([
+        //             'user_id' => $user->id,
+        //         ])->first();
+        //         $user->profile = $userProfile;
+
+        //         $userPictures = Pictures::Where([
+        //             'user_id' => $user->id,
+        //         ])->get();
+        //         $user->pictures = $userPictures;
+        //     }
+        //     return response()->json([
+        //         'data' => $users,
+        //         'status' => true,
+        //         'statusCode' => 200,
+        //         'message' => 'successfully Listed'
+        //     ]);
+
+
+        // $gender =  auth()->user()->gender == User::MALE ? User::FEMALE : User::FEMALE;
+        $favUsersArray = array();
+        $favUsers = UserFavorites::where('user_id', '=', auth()->user()->id)->get();
+        foreach ($favUsers as $key => $favUser) {
+            $user = User::find($favUser->fav_user_id);
+            $user->profile = $user->profile;
+            $user->pictures = $user->pictures;
+            $friend = Friends::where(function ($query) use ($user) {
+                $query->where([
+                    ['friend_user_id', '=', auth()->user()->id],
+                    ['user_id', '=', $user->id],
+                    ['status', '=', Friends::ACCEPTED],
+                ]);
+            })->orWhere(function ($query) use ($user) {
+                $query->where([
+                    ['friend_user_id', '=', $user->id],
+                    ['user_id', '=', auth()->user()->id],
+                    ['status', '=', Friends::ACCEPTED],
+                ]);
+            })->first();
+
+            $newFriend = Friends::where([
+                ['friend_user_id', '=', $user->id],
+                ['user_id', '=', auth()->user()->id],
+                ['status', '=', Friends::NEWW],
             ])->first();
-            $user->profile = $userProfile;
-
-            $userPictures = Pictures::Where([
-                'user_id' => $user->id,
-            ])->get();
-            $user->pictures = $userPictures;
+            if (!$friend) {
+                $user->favourite = $favUser;
+                $user->friend = $newFriend;
+                $favUsersArray[] = $user;
+            }
         }
+
+
         return response()->json([
-            'data' => $users,
+            'data' => $favUsersArray,
             'status' => true,
             'statusCode' => 200,
             'message' => 'successfully Listed'
@@ -139,7 +181,7 @@ class FavoriteController extends ApiController
             'fav_user_id' => $request->fav_user_id,
         ])->delete();
         if ($friend) {
-            return $this->successResponse('Un Favorite Succeed', 200);
+            return $this->successResponse('Removed from favorite list', 200);
         } else {
             return $this->errorResponse('Un Favorite not Succeed', 404);
         }
